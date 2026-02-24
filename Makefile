@@ -4,7 +4,7 @@ SRC = src/main.cpp
 OUT = ./build/main
 
 ifeq ($(MODE), debug)
-	CXXFLAGS = -g O0
+	CXXFLAGS = -g 
 else
 	CXXFLAGS = -O2
 endif

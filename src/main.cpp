@@ -14,15 +14,13 @@ int main(int argc, char* argv[]) {
         string arg = argv[i];
         if (arg == "--mode=debug") {
             debug = true;
-        }
-        if (arg == "--verbose") {
+        }else if (arg == "--verbose") {
             verbose = true;
         }
         }
       if (debug){
         cout << "[DEBUG] Running in debug mode" << endl;   
-       }
-      if (verbose){
+       }else if (verbose){
         cout << "[VERBOSE] Verbose logging enabled" << endl;
       }
         return 0;
