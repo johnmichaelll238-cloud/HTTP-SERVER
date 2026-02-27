@@ -1,4 +1,3 @@
-MODE ?= debug
 CXX = g++
 SRC = src/main.cpp
 OUT = ./build/main
