@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <string>
+#include <sstream>
 
 int main(){
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -33,19 +34,41 @@ while (true){
         continue;
     }
    char buffer[1024] = {0};
-   int bytes_read = read(client_fd, buffer, sizeof(buffer));
-   if (bytes_read < 0) {
-        perror("Read failed");
-        close(client_fd);
-        continue;
+   ssize_t bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0); //left space for null terminator, just for extra safety
+   if(bytes_read >= 0){
+    buffer[bytes_read] = '\0'; // Null-terminate the buffer
     }
-    //convert bytes to strings
+  
+    if (bytes_read <= 0){
+        std::cout << "No Data received from client, or connection closed." << std::endl;
+    }
+    //print the request to the console
     std::string data(buffer, bytes_read);
+   std::istringstream stream(data);
+   std::string line;
+   //Get request line
+   std::getline(stream, line);
+   if (!line.empty() && line.back() == '\r' ){
+    line.pop_back(); //Remove the trailing "r"
+   }
+    std::string method, path, version;
+    std::istringstream requestline(line);
+    requestline >> method >> path >> version;
+    std::cout << "Method: " << method << std::endl;
+    std::cout << "Path: " << path << std::endl;
+    std::cout << "Version: " << version << std::endl;
+    //Header lines
+    while (std::getline(stream, line) && line != "\r"){
+     if(!line.empty() && line.back() == '\r'){
+        line.pop_back();
+     }
+     std::cout << "Header: " << line << std:: endl;   
+    }
     std::cout << "Received request:\n" << bytes_read << " bytes: ";
     std::cout.write(data.data(), data.size());
     std::cout << std::endl;
-
-    //respond to the client
+    
+    //respond to the client 
     send(client_fd, data.data(), data.size(), 0);
     close(client_fd);
 }
