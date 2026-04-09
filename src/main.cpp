@@ -33,7 +33,7 @@ void log_request(
 
 // --- Per-client handler ---
 void handle_client(int client_fd, std::string client_ip) {
-    char buffer[1024] = {0};
+    char buffer[4096] = {0};
     ssize_t bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
     if (bytes_read <= 0) {
         std::cout << "No data received from client or connection closed.\n";
@@ -90,7 +90,7 @@ void handle_client(int client_fd, std::string client_ip) {
 
     close(client_fd);
     log_request(client_ip, method, path, status_line);
-}
+}    
 
 // --- Main server ---
 int main() {
